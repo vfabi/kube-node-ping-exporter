@@ -1,0 +1,61 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-ping-exporter
+  namespace: mon
+data:
+  nodes.json: >
+    [
+      {"name": "o1-master-1a", "ipAddress": "1.1.1.1"},
+      {"name": "o1-master-2a", "ipAddress": "2.2.2.2"},
+      {"name": "o1-worker-1", "ipAddress": "3.3.3.3"},
+      {"name": "github.com", "ipAddress": "140.82.121.4"}
+    ]
+
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-ping-exporter
+  namespace: mon
+  labels:
+    tier: monitoring
+    app: node-ping-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-ping-exporter
+  template:
+    metadata:
+      labels:
+        app: node-ping-exporter
+    spec:
+      terminationGracePeriodSeconds: 0
+      containers:
+      - name: node-ping-exporter
+        image: vfabi/node-ping-exporter:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: APP_NODE_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: spec.nodeName
+          - name: PROMETHEUS_DISABLE_CREATED_SERIES
+            value: "True"
+          - name: APP_CONFIG_FILE
+            value: "/config/nodes.json"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
+        volumeMounts:
+          - name: config
+            mountPath: /config
+      volumes:
+        - name: config
+          configMap:
+            name: node-ping-exporter
