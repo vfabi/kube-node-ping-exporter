@@ -4,6 +4,8 @@ kind: ConfigMap
 metadata:
   name: node-ping-exporter
   namespace: mon
+  labels:
+    app.kubernetes.io/name: node-ping-exporter
 data:
   nodes.json: >
     [
@@ -20,16 +22,15 @@ metadata:
   name: node-ping-exporter
   namespace: mon
   labels:
-    tier: monitoring
-    app: node-ping-exporter
+    app.kubernetes.io/name: node-ping-exporter
 spec:
   selector:
     matchLabels:
-      app: node-ping-exporter
+      app.kubernetes.io/name: node-ping-exporter
   template:
     metadata:
       labels:
-        app: node-ping-exporter
+        app.kubernetes.io/name: node-ping-exporter
     spec:
       terminationGracePeriodSeconds: 0
       containers:

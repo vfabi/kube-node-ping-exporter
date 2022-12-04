@@ -1,0 +1,40 @@
+global:
+  nameOverride: ""
+  fullnameOverride: ""
+  commonCustomLabels: {}
+
+
+controller:
+  image:
+    repository: vfabi/node-ping-exporter
+    pullPolicy: IfNotPresent
+    tag: ""
+  imagePullSecrets: []
+  ports:
+  - name: metrics
+    containerPort: 8000
+    protocol: TCP
+  livenessProbe: {}
+  readinessProbe: {}
+  resources:
+    requests:
+      memory: "64Mi"
+      cpu: "100m"
+    limits:
+      memory: "128Mi"
+      cpu: "200m"
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+
+configmap:
+  data:
+    nodes.json: |
+      [
+        {"name": "node-1", "ipAddress": "8.8.8.8"},
+        {"name": "github.com", "ipAddress": "140.82.121.4"}
+      ]

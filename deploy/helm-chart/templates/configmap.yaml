@@ -1,0 +1,13 @@
+{{- $fullname := include "node-ping-exporter.fullname" . -}}
+
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $fullname }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "node-ping-exporter.labels" . | nindent 4 }}
+{{- with $.Values.configmap.data }}
+data: {{- toYaml . | nindent 2 }}
+{{- end }}
