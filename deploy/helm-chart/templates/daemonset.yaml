@@ -1,0 +1,75 @@
+{{- $fullname := include "node-ping-exporter.fullname" . -}}
+
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{ $fullname }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "node-ping-exporter.labels" . | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "node-ping-exporter.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "node-ping-exporter.selectorLabels" . | nindent 8 }}
+      {{- with .Values.controller.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      terminationGracePeriodSeconds: 0
+      imagePullSecrets: {{ .Values.controller.imagePullSecrets }}
+      {{- with $.Values.controller.podSecurityContext }}
+      securityContext: {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ $fullname }}
+        image: "{{ .Values.controller.image.repository }}:{{ .Values.controller.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.controller.image.pullPolicy }}
+        {{- with $.Values.controller.securityContext }}
+        securityContext: {{- toYaml . | nindent 10 }}
+        {{- end }}
+        env:
+        - name: APP_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: PROMETHEUS_DISABLE_CREATED_SERIES
+          value: "True"
+        - name: APP_CONFIG_FILE
+          value: "/config/nodes.json"
+        {{- with $.Values.controller.resources }}
+        resources: {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with $.Values.controller.ports }}
+        ports: {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with $.Values.controller.livenessProbe }}
+        livenessProbe: {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with $.Values.controller.readinessProbe }}
+        readinessProbe: {{- toYaml . | nindent 12 }}
+        {{- end }}
+        volumeMounts:
+        - name: config
+          mountPath: /config
+      {{- with .Values.controller.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.controller.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.controller.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+      - name: config
+        configMap:
+          name: {{ $fullname }}

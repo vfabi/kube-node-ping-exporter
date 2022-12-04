@@ -51,7 +51,7 @@ It deploys `node-ping-exporter` to every Kubernetes node as DaemonSet and takes 
         regex: ([^:]+)(?::\d+)?
         replacement: ${1}:8000
         target_label: __address__
-    - source_labels: [__meta_kubernetes_pod_label_app]
+    - source_labels: [__meta_kubernetes_pod_label_app_kubernetes_io_name]
         action: keep
         regex: 'node-ping-exporter'
 ```
