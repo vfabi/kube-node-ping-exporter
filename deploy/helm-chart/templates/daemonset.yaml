@@ -1,4 +1,4 @@
-{{- $fullname := include "node-ping-exporter.fullname" . -}}
+{{- $fullname := include "kube-node-ping-exporter.fullname" . -}}
 
 
 apiVersion: apps/v1
@@ -7,15 +7,15 @@ metadata:
   name: {{ $fullname }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "node-ping-exporter.labels" . | nindent 4 }}
+    {{- include "kube-node-ping-exporter.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
-      {{- include "node-ping-exporter.selectorLabels" . | nindent 6 }}
+      {{- include "kube-node-ping-exporter.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "node-ping-exporter.selectorLabels" . | nindent 8 }}
+        {{- include "kube-node-ping-exporter.selectorLabels" . | nindent 8 }}
       {{- with .Values.controller.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
