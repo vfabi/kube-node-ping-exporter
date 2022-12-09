@@ -1,9 +1,9 @@
 apiVersion: v2
-name: node-ping-exporter
-description: Helm chart for node-ping-exporter. A simple Prometheus exporter for ICMP echo requests, that helps to measure latency from or between Kubernetes nodes.
+name: kube-node-ping-exporter
+description: Helm chart for kube-node-ping-exporter. Simple application to send ICMP echo requests that exposes results as Prometheus metrics.
 type: application
-version: 1.0.0
-appVersion: "1.4.0"
+version: 2.0.0
+appVersion: "2.0.0"
 kubeVersion: '>=1.20.0-0'
 maintainers:
 - name: vfabi

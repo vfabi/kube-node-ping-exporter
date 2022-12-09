@@ -6,7 +6,7 @@ global:
 
 controller:
   image:
-    repository: vfabi/node-ping-exporter
+    repository: vfabi/kube-node-ping-exporter
     pullPolicy: IfNotPresent
     tag: ""
   imagePullSecrets: []
