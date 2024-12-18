@@ -33,7 +33,7 @@ REGISTRY.unregister(PROCESS_COLLECTOR)
 REGISTRY.unregister(PLATFORM_COLLECTOR)
 REGISTRY.unregister(REGISTRY._names_to_collectors['python_gc_objects_collected_total'])
 
-FPING_CMDLINE = f"/usr/sbin/fping -p 1000 -A -C {APP_PINGS_COUNT} -B 1 -q -r 1".split(" ")
+FPING_CMDLINE = f"/usr/sbin/fping -4 -p 1000 -A -C {APP_PINGS_COUNT} -B 1 -q -r 1".split(" ")
 FPING_REGEX = re.compile(r"^(\S*)\s*: (.*)$", re.MULTILINE)
 
 registry = CollectorRegistry()
@@ -189,6 +189,8 @@ def call_fping(ips):
     if process.returncode == 3:
         raise ValueError("Invalid arguments: {}".format(cmdline))
     if process.returncode == 4:
+        # print(f'cmdline: {cmdline}')
+        # print(f'process.stdout: {process.stdout}')
         raise OSError("fping reported syscall error: {}".format(process.stderr))
     return process.stdout
 
